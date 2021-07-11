@@ -1,0 +1,291 @@
+CREATE OR REPLACE VIEW NETSUITE_BOOKINGS_BILLINGS 
+(
+	TRANSACTION_TYPE 					COMMENT 'DETERMINES WHETHER A TRANSACTION IS A SALES ORDER, AN INVOICE, A RETURN, OR SOME OTHER TYPE OF TRANSACTION'
+	,TRANSACTION_CATEGORY 				COMMENT 'IMPLEMENTS FINANCE DEPARTMENTS DEFAULT LOGIC FOR BOOKINGS AND BILLINGS TO DESIGNATE WHETHER A TRANSACTION IS A BOOKING OR BILLING'
+	,TRANSACTION_STATUS					COMMENT 'STATUS OF TRANSACTION'
+	,ACCOUNT_TYPE 						COMMENT 'ACCOUNT TYPE OF TRANSACTION LINE'
+	,TRANSACTION_PRODUCT_CLASS 			COMMENT 'ASSIGNED PRODUCT CLASS OF THE OVERALL TRANSACTION - NOT AS PRECISE AS AT THE ITEM LEVEL'
+	,ITEM_ACCOUNT_NAME 					COMMENT 'ACCOUNT NAME OF TRANSACTION LINE'
+	,ITEM_SHIPPING_CATEGORY 				COMMENT 'SHIPPING CATEGORY OF THE TRANSACTION LINE'
+	,ORDER_TYPE 							COMMENT 'ORDER TYPE OF THE TRANSACTION - TYPICALLY DENOTES WHAT CHANNEL THE ORDER WAS CONSUMED THROUGH, IS AN OFFICIAL INDICATOR OF ECOMMERCE ORDERS'
+	,SHIPPING_HANDLING_IND 				COMMENT 'BOOLEAN VALUE FOR A SHIPPING AND HANDLING TRANSACTION LINE ITEM'
+	,ORDER_ON_HOLD_IND 					COMMENT 'BOOLEAN VALUE FOR IF AN ORDER IS ON HOLD'
+	,ORDER_ON_HOLD_REASON 				COMMENT 'REASON FOR AN ORDER BEING ON HOLD'
+	,SALES_REP_ID 						COMMENT 'SALES REP ID CREDITED WITH THE SALES ORDER (IF APPLIES) NOTE: THIS IS THE HISTORICAL ASSIGNMENT OF THE TRANSACTION RECORD, NOT THE CURRENTLY NAMED ACCOUNT OWNER OF THE CUSTOMER ON THE TRANSACTION'
+	,SALES_REP_NAME 						COMMENT 'SALES REP NAME CREDITED WITH THE SALES ORDER (IF APPLIES) NOTE: THIS IS THE HISTORICAL ASSIGNMENT OF THE TRANSACTION RECORD, NOT THE CURRENTLY NAMED ACCOUNT OWNER OF THE CUSTOMER ON THE TRANSACTION'
+	,SALES_MANAGER_NAME 					COMMENT 'SALES MANAGER ASSIGNED TO CREDITED SALES REP (IF APPLIES) NOTE: CORRESPONDS TO THE CURRENTLY ASSIGNED MANAGER OF THE HISTORICAL RECORD OF THE ASSIGNED REP'
+	,ITEM_PRODUCT_CLASS_1 				COMMENT 'TOP LEVEL CLASS OF THE TRANSACTION LINE ITEM (PRODUCT VERTICAL)'
+	,ITEM_PRODUCT_CLASS_2 				COMMENT 'MIDDLE LEVEL CLASS OF THE TRANSACTION LINE ITEM (PRODUCT FAMILY)'
+	,ITEM_PRODUCT_CLASS_3 				COMMENT 'BOTTOM LEVEL CLASS OF THE TRANSACTION LINE ITEM (PRODUCT SUB-FAMILY)'
+	,GROUP_OR_CLINICAL 					COMMENT 'RESTATEMENT OF TOP LEVEL CLASS OF THE TRANSACTION LINE ITEM'
+	,ITEM_NBR_MATERIAL_ID 				COMMENT 'TRANSACTION LINE ITEM NETSUITE DISPLAY ID'
+	,ITEM_NAME 							COMMENT 'TRANSACTION LINE ITEM NETSUITE DISPLAY NAME'
+	,ITEM_DESCRIPTION 					COMMENT 'TRANSACTION LINE ITEM NETSUITE DISPLAY DESCRIPTION'
+	,ITEM_TYPE 							COMMENT 'TRANSACTION LINE ITEM NETSUITE ITEM INVENTORY TYPE'
+	,ITEM_MATERIAL_GROUP 				COMMENT 'LOOKUP VALUE FOR TRANSACTION LINE ITEM. CORRESPONDS TO PRODUCT DISTINCTIONS OF DIGITAL PRODUCTS'
+	,ITEM_LOCATION 						COMMENT 'TRANSACTION LINE ITEM NETSUITE ITEM INVENTORY LOCATION'
+	,ITEM_TRAINING_INDICATOR 			COMMENT 'TRANSACTION LINE ITEM TRAINING ITEM INDICATOR'
+	,ITEM_WEBINAR_INDICATOR 				COMMENT 'TRANSACTION LINE ITEM WEBINAR ITEM INDICATOR'
+	,DOCUMENT_NBR 						COMMENT 'TRANSACTION DOCUMENT NUMBER - DENOTES DISTINCT TRANSACTION'
+	,TRANSACTION_NUMBER 					COMMENT 'TRANSACTION NUMBER'
+	,CONTRACT_SO 						COMMENT 'DENOTES IF A TRANSACTION HAS BEEN FLAGGED AS A PART OF CONTRACT OPERATIONS'
+	,ITEM_QUANTITY 						COMMENT 'TRANSACTION LINE ITEM QUANTITY'
+	,ITEM_PRICE_TYPE 					COMMENT 'TRANSACTION LINE ITEM PRICE TYPE'
+	,ITEM_BASE_PRICE 					COMMENT 'TRANSACTION LINE ITEM BASE PRICE'
+	,ITEM_GROSS_SALE_AMOUNT 				COMMENT 'TRANSACTION LINE ITEM GROSS SALE AMOUNT'
+	,ITEM_DISCOUNT_PCT_APPLIED 			COMMENT 'TRANSACTION LINE ITEM DISCOUNT PERCENT APPLIED'
+	,ITEM_DISCOUNT_AMOUNT 				COMMENT 'TRANSACTION LINE ITEM DISCOUNT AMOUNT APPLIED'
+	,ITEM_SALE_PRICE 					COMMENT 'TRANSACTION LINE ITEM SALE PRICE'
+	,ITEM_NET_SALE_AMOUNT 				COMMENT 'USE THIS TO DETERMINE BOOKINGS AND BILLINGS TOTALS - TRANSACTION LINE ITEM NET SALE AMOUNT'
+	,ITEM_TAXABLE 						COMMENT 'TRANSACTION LINE ITEM IS TAXABLE INDICATOR'
+	,TRANSACTION_DATE 					COMMENT 'OFFICIAL TRANSACTION DATE'
+	,SALES_EFFECTIVE_DATE 				COMMENT 'EFFECTIVE SALES TRANSACTION DATE'
+	,TRANSACTION_CLOSED_DATE 			COMMENT 'TRANSACTION CLOSED DATE'
+	,REVERSAL_DATE 						COMMENT 'TRANSACTION REVERSAL DATE'
+	,CUSTOMER_ID 						COMMENT 'NETSUITE CUSTOMER DISPLAY ID'
+	,CUSTOMER 							COMMENT 'NETSUITE CUSTOMER NAME'
+	,CUSTOMER_CATEGORY 					COMMENT 'CUSTOMER CATEGORY'
+	,CUSTOMER_GROUP_ACCOUNT_OWNERSHIP 	COMMENT 'GROUP VERTICAL CUSTOMER SALES ACCOUNT ASSIGNMENT'
+	,CUSTOMER_CLINICAL_ACCOUNT_OWNERSHIP COMMENT 'CLINICAL VERTICAL CUSTOMER SALES ACCOUNT ASSIGNMENT'
+	,CUSTOMER_STATUS 					COMMENT 'CUSTOMER STATUS'
+	,PARENT_CUSTOMER_ID 					COMMENT 'NETSUITE PARENT CUSTOMER DISPLAY ID'
+	,PARENT_CUSTOMER 					COMMENT 'NETSUITE PARENT CUSTOMER NAME'
+	,PARENT_CUSTOMER_CATEGORY 			COMMENT 'PARENT CUSTOMER CATEGORY'
+	,PARENT_GROUP_ACCOUNT_OWNERSHIP 		COMMENT 'GROUP VERTICAL PARENT CUSTOMER SALES ACCOUNT ASSIGNMENT'
+	,PARENT_CLINICAL_ACCOUNT_OWNERSHIP 	COMMENT 'CLINICAL VERTICAL PARENT CUSTOMER SALES ACCOUNT ASSIGNMENT'
+	,CUSTOMER_GROUP 						COMMENT 'CUSTOMER GROUP'
+	,BILLING_CITY 						COMMENT 'CUSTOMER BILLING CITY'
+	,BILLING_STATE 						COMMENT 'CUSTOMER BILLING STATE'
+	,BILLING_ZIP 						COMMENT 'CUSTOMER BILLING ZIP CODE'
+	,BILLING_COUNTRY 					COMMENT 'CUSTOMER BILLING COUNTRY'
+	,SHIPPING_CITY 						COMMENT 'CUSTOMER SHIPPING CITY'
+	,SHIPPING_STATE 						COMMENT 'CUSTOMER SHIPPING STATE'
+	,SHIPPING_ZIP 						COMMENT 'CUSTOMER SHIPPING ZIP'	
+	,SHIPPING_COUNTRY 					COMMENT 'CUSTOMER SHIPPING COUNTRY'
+	,CUSTOMER_INTERNAL_ID 				COMMENT 'FOREIGN KEY - CUSTOMER'
+	,PARENT_CUSTOMER_INTERNAL_ID 		COMMENT 'FOREIGN KEY - PARENT CUSTOMER'
+	,TRANSACTION_ID 						COMMENT 'FOREIGN KEY - TRANSACTION'
+	,TRANSACTION_LINE_ID 				COMMENT 'FOREIGN KEY - TRANSACTION LINE'
+	,TRANSACTION_LINE_UNIQUE_ID 			COMMENT 'FOREIGN KEY - TRANSACTION UNIQUE LINE'
+	,ITEM_ID 							COMMENT 'FOREIGN KEY - ITEM'
+	,DEPARTMENT_ID 						COMMENT 'FOREIGN KEY - DEPARTMENT'
+	,ITEM_CLASS_ID 						COMMENT 'FOREIGN KEY - ITEM CLASS'
+	,ITEM_ACCOUNT_ID 					COMMENT 'FOREIGN KEY - ACCOUNT'
+	,PROMO_CODE_ID 						COMMENT 'FOREIGN KEY - PROMO CODE'
+	,LEAD_SOURCE_ID 						COMMENT 'FOREIGN KEY - CAMPAIGN'
+)
+COMMENT = 'LAITH BARAKAT | THIS VIEW COMPILES ALL SALES ORDER AND INVOICE TRANSACTIONS AT THE LINE ITEM LEVEL TO PROVIDE BOOKINGS AND BILLINGS AMOUNTS WITH RELEVANT PRODUCT, CUSTOMER, AND ORDER INFORMATION'
+
+AS
+
+SELECT
+      -- Transaction & Transaction_Line Filters
+      ------------------------------------------------------------------------------------------------------------------------
+       CAST(t.TRANSACTION_TYPE AS VARCHAR(100))                                               AS TRANSACTION_TYPE
+	   ,CASE WHEN UPPER(t.TRANSACTION_TYPE  )     IN ('SALES ORDER','RETURN AUTHORIZATION')
+             AND UPPER(ac.TYPE_NAME        )      = 'INCOME'
+			 AND (
+					 (
+						 (UPPER(t.TRANSACTION_TYPE  )      IN ('SALES ORDER')) 
+						 AND 
+						 (UPPER(t.STATUS)			   NOT IN ('CANCELLED','CLOSED'))
+					 )			 --STATUSES FOR SALES ORDER 
+					 OR
+					 (
+						 (UPPER(t.TRANSACTION_TYPE	 )	   IN ('RETURN AUTHORIZATION'))
+						 AND 
+						 (UPPER(t.STATUS) 			   NOT IN ('CANCELLED','CLOSED','PARTIALLY RECEIVED','PENDING APPROVAL', 'PENDING RECEIPT', 'PENDING REFUND', 'PENDING REFUND/PARTIALLY RECEIVED'))
+					 )
+					 OR
+					 (
+						 (UPPER(t.TRANSACTION_TYPE  )      IN ('SALES ORDER')) 
+						 AND 
+						 (UPPER(t.STATUS)				   IN ('CLOSED'))
+						 AND
+						 (t.TRANID 						   LIKE '9%') 
+					 )
+					 OR
+					 (
+						 (UPPER(t.TRANSACTION_TYPE  )      IN ('RETURN AUTHORIZATION')) 
+						 AND 
+						 (UPPER(t.STATUS)				   IN ('CLOSED'))
+						 AND
+						 (t.TRANID 						   LIKE '6%') 
+					 )
+				 )
+            THEN 'BOOKINGS'
+
+            WHEN UPPER(t.TRANSACTION_TYPE  )     IN ('CUSTOMER REFUND','CASH SALE','CREDIT MEMO','INVOICE')
+             AND UPPER(t.STATUS            ) NOT IN ('CANCELLED','NOT DEPOSITED','REJECTED','UNAPPROVED PAYMENT','VOIDED')
+             AND UPPER(ac.TYPE_NAME        )     IN ('INCOME','DEFERRED REVENUE')
+            THEN 'BILLINGS'
+			
+			ELSE NULL
+			END 																			  AS TRANSACTION_CATEGORY
+      ,t.STATUS                                                                               AS TRANSACTION_STATUS
+      ,COALESCE(ac.TYPE_NAME,CONCAT('MISSING:',CAST(tl.account_id AS VARCHAR(10))))           AS ACCOUNT_TYPE
+      ,clt.Name                                                                               AS TRANSACTION_PRODUCT_CLASS
+      ,COALESCE(ac.NAME     ,CONCAT('MISSING:',CAST(tl.account_id AS VARCHAR(10))))           AS ITEM_ACCOUNT_NAME
+      ,tl.ITEM_SHIPPING_CATEGORY                                                              AS ITEM_SHIPPING_CATEGORY
+      ,COALESCE(ot.LIST_ITEM_NAME,CONCAT('MISSING:',CAST(t.SO_ORDER_TYPE_ID AS VARCHAR(10)))) AS ORDER_TYPE
+      ,CAST(CASE WHEN tl.ACCOUNT_ID = 108 THEN 1 ELSE 0 END AS BOOLEAN)                       AS SHIPPING_HANDLING_IND
+      ,CAST(CASE WHEN t.ORDER_ON_HOLD = 'YES' THEN 1 ELSE 0 END AS BOOLEAN)                   AS ORDER_ON_HOLD_IND
+      ,ohr.LIST_ITEM_NAME                                                                     AS ORDER_ON_HOLD_REASON
+      ,t.SALES_REP_ID                                                                         AS SALES_REP_ID
+      ,rep.FULL_NAME                                                                          AS SALES_REP_NAME
+      ,mgr.FULL_NAME                                                                          AS SALES_MANAGER_NAME
+
+      -- Item Product Class
+      ------------------------------------------------------------------------------------------------------------------------
+      ,COALESCE(TRIM(cl1.Name,' -')||CASE WHEN cl1.ISINACTIVE = 'Yes' THEN ' *INACTIVE*' ELSE '' END,'- NONE -') AS ITEM_PRODUCT_CLASS_1
+      ,COALESCE(TRIM(cl2.Name,' -')||CASE WHEN cl2.ISINACTIVE = 'Yes' THEN ' *INACTIVE*' ELSE '' END,'- NONE -') AS ITEM_PRODUCT_CLASS_2
+      ,COALESCE(TRIM(cl3.Name,' -')||CASE WHEN cl3.ISINACTIVE = 'Yes' THEN ' *INACTIVE*' ELSE '' END,'- NONE -') AS ITEM_PRODUCT_CLASS_3
+      ,CASE 
+            WHEN
+                UPPER(ITEM_PRODUCT_CLASS_1) = 'GROUP'
+            THEN 'GROUP'
+            WHEN
+                UPPER(ITEM_PRODUCT_CLASS_1) = 'CLINICAL'
+            THEN 'CLINICAL'
+            ELSE 'OTHER'
+        END                                                                                   AS GROUP_OR_CLINICAL
+
+      -- Item
+      ------------------------------------------------------------------------------------------------------------------------
+      ,i.FULL_NAME                                                                            AS ITEM_NBR_MATERIAL_ID
+      ,COALESCE(i.DISPLAYNAME,i.FULL_NAME)                                                    AS ITEM_NAME
+      ,COALESCE(i.SALESDESCRIPTION,i.FULL_NAME)                                               AS ITEM_DESCRIPTION
+      ,i.TYPE_NAME                                                                            AS ITEM_TYPE
+      ,COALESCE(mi.LIST_ITEM_NAME,'- NONE -')                                                 AS ITEM_MATERIAL_GROUP
+      ,lo.NAME                                                                                AS ITEM_LOCATION
+      ,i.IS_TRAINING_ITEM                                                                     AS ITEM_TRAINING_INDICATOR
+      ,i.IS_GROUP_WEBINAR                                                                     AS ITEM_WEBINAR_INDICATOR
+
+   -- Transaction Related Documents
+      ------------------------------------------------------------------------------------------------------------------------
+      ,t.TRANID                                                                               AS DOCUMENT_NBR
+      ,t.TRANSACTION_NUMBER                                                                   AS TRANSACTION_NUMBER
+      ,t.CONTRACT_OPS_SO                                                                      AS CONTRACT_SO
+
+   -- Line Item Info
+      ------------------------------------------------------------------------------------------------------------------------
+      ,-1 * tl.ITEM_COUNT                                                                     AS ITEM_QUANTITY
+      ,pt.NAME                                                                                AS ITEM_PRICE_TYPE
+      ,tl.ITEM_BASE_PRICE                                                                     AS ITEM_BASE_PRICE
+      ,-1 * tl.ITEM_COUNT * CASE WHEN CHARINDEX('%',tl.ITEM_BASE_PRICE) > 0 THEN 0 ELSE TRY_CAST(REPLACE(tl.ITEM_BASE_PRICE,'%','') AS DECIMAL(18,6)) END AS ITEM_GROSS_SALE_AMOUNT
+      ,COALESCE(tl.DISCOUNT_APPLIED,'0.')                                                     AS ITEM_DISCOUNT_PCT_APPLIED
+      ,-tl.ITEM_COUNT*(  tl.SALE_PRICE
+                       - CASE WHEN CHARINDEX('%',tl.ITEM_BASE_PRICE) > 0 THEN 0 ELSE TRY_CAST(REPLACE(tl.ITEM_BASE_PRICE,'%','') AS DECIMAL(18,6)) END
+                      )                                                                       AS ITEM_DISCOUNT_AMOUNT
+      ,tl.SALE_PRICE                                                                          AS ITEM_SALE_PRICE
+      ,-1 * tl.AMOUNT                                                                         AS ITEM_NET_SALE_AMOUNT
+      ,tl.ISTAXABLE                                                                           AS ITEM_TAXABLE
+
+    -- Transaction Dates
+      ------------------------------------------------------------------------------------------------------------------------
+      ,                  CAST(t.TRANDATE             AS DATE)                                 AS TRANSACTION_DATE
+      ,                  CAST(t.SALES_EFFECTIVE_DATE AS DATE)                                 AS SALES_EFFECTIVE_DATE
+      ,                  CAST(t.CLOSED               AS DATE)                                 AS TRANSACTION_CLOSED_DATE
+      ,                  CAST(t.REVERSAL_DATE        AS DATE)                                 AS REVERSAL_DATE
+      
+      -- Customer Info
+      ------------------------------------------------------------------------------------------------------------------------
+      ,COALESCE(c0.NAME       ,'*NOT FOUND*')                                                 AS CUSTOMER_ID
+      ,COALESCE(c0.COMPANYNAME,'*NOT FOUND*')                                                 AS CUSTOMER
+      ,COALESCE(ct0.NAME      ,'*NOT FOUND*')                                                 AS CUSTOMER_CATEGORY
+      ,ga0.LIST_ITEM_NAME                                                                     AS CUSTOMER_GROUP_ACCOUNT_OWNERSHIP
+      ,ca0.LIST_ITEM_NAME                                                                     AS CUSTOMER_CLINICAL_ACCOUNT_OWNERSHIP
+      ,cs.NAME                                                                                AS CUSTOMER_STATUS
+      ------------------------------------------------------------------------------------------------------------------------
+      -- Note - Parent customer info does not fully account for potential missing Customers in the hierarchy
+      ,COALESCE(c3.NAME,c2.NAME,c1.NAME,c0.NAME,'*NOT FOUND*')                                AS PARENT_CUSTOMER_ID
+      ,COALESCE(c3.COMPANYNAME,c2.COMPANYNAME,c1.COMPANYNAME,c0.COMPANYNAME,'*NOT FOUND*')    AS PARENT_CUSTOMER
+      ,COALESCE(ct3.NAME,ct2.NAME,ct1.NAME,ct0.NAME,'*NOT FOUND*')                            AS PARENT_CUSTOMER_CATEGORY
+      ,COALESCE(ga3.LIST_ITEM_NAME,ga2.LIST_ITEM_NAME,ga1.LIST_ITEM_NAME,ga0.LIST_ITEM_NAME)  AS PARENT_GROUP_ACCOUNT_OWNERSHIP
+      ,COALESCE(ca3.LIST_ITEM_NAME,ca2.LIST_ITEM_NAME,ca1.LIST_ITEM_NAME,ca0.LIST_ITEM_NAME)  AS PARENT_CLINICAL_ACCOUNT_OWNERSHIP
+      ,grp.CUSTOMER_GROUP                                                                     AS CUSTOMER_GROUP
+
+      -- Transaction Address - pulled from current BILLTO, SHIPTO, else first address found
+      ------------------------------------------------------------------------------------------------------------------------
+      ,COALESCE(ab.CITY   ,ash.CITY   ,ax.CITY   )                                            AS BILLING_CITY
+      ,COALESCE(ab.STATE  ,ash.STATE  ,ax.STATE  )                                            AS BILLING_STATE
+      ,COALESCE(ab.ZIP    ,ash.ZIP    ,ax.ZIP    )                                            AS BILLING_ZIP
+      ,COALESCE(ab.COUNTRY,ash.COUNTRY,ax.COUNTRY)                                            AS BILLING_COUNTRY
+      ,COALESCE(           ash.CITY   ,ax.CITY   )                                            AS SHIPPING_CITY
+      ,COALESCE(           ash.STATE  ,ax.STATE  )                                            AS SHIPPING_STATE
+      ,COALESCE(           ash.ZIP    ,ax.ZIP    )                                            AS SHIPPING_ZIP
+      ,COALESCE(           ash.COUNTRY,ax.COUNTRY)                                            AS SHIPPING_COUNTRY
+	  
+      -- Netsuite Linking ID Elements
+      ------------------------------------------------------------------------------------------------------------------------
+      ,t.ENTITY_ID                                                                            AS CUSTOMER_INTERNAL_ID        -- Customer Link
+      ,COALESCE(c3.CUSTOMER_ID,C2.CUSTOMER_ID,c1.CUSTOMER_ID,C0.CUSTOMER_ID)                  AS PARENT_CUSTOMER_INTERNAL_ID -- Parent Customer Link
+      ,t.TRANSACTION_ID                                                                       AS TRANSACTION_ID              -- Transaction Link
+      ,tl.TRANSACTION_LINE_ID                                                                 AS TRANSACTION_LINE_ID         -- Transaction Line ID
+      ,tl.UNIQUE_KEY                                                                          AS TRANSACTION_LINE_UNIQUE_ID  -- Transaction Line Unique Record ID
+      ,tl.ITEM_ID                                                                             AS ITEM_ID                     -- Item link
+      ,tl.DEPARTMENT_ID                                                                       AS DEPARTMENT_ID		     -- Department ID
+      ,COALESCE(i.CLASS_ID,tl.CLASS_ID)                                                       AS ITEM_CLASS_ID               -- Item Product Class Link
+      ,tl.ACCOUNT_ID                                                                          AS ITEM_ACCOUNT_ID             -- transaction line Accounting link
+      ,t.PROMOTION_CODE_ID								      								  AS PROMO_CODE_ID		     -- promotion code link
+      ,t.LEAD_SOURCE_ID								              							  AS LEAD_SOURCE_ID		     -- lead source link
+
+       FROM TRANSACTIONS               AS   t
+  LEFT JOIN ADDRESS_BOOK               AS  ab ON t.ENTITY_ID                   = ab.ENTITY_ID               AND 'Yes' = ab.IS_DEFAULT_BILL_ADDRESS  AND 'No' = ab.IS_INACTIVE  AND 0 = ab._FIVETRAN_DELETED
+  LEFT JOIN ADDRESS_BOOK               AS ash ON t.ENTITY_ID                   = ash.ENTITY_ID              AND 'Yes' = ash.IS_DEFAULT_SHIP_ADDRESS AND 'No' = ash.IS_INACTIVE AND 0 = ash._FIVETRAN_DELETED
+  LEFT JOIN (-- Get addresses by customer ordered by defaults followed by creation sequence, to be used if the defaults above are not found
+             SELECT *,ROW_NUMBER() OVER (PARTITION BY ENTITY_ID
+                                             ORDER BY IS_DEFAULT_BILL_ADDRESS DESC
+                                                     ,IS_DEFAULT_SHIP_ADDRESS DESC
+                                                    ,ADDRESS_BOOK_ID
+                                        ) AS CNT
+               FROM ADDRESS_BOOK
+              WHERE 'No' = IS_INACTIVE AND 0 = _FIVETRAN_DELETED 
+            )                                                           AS  ax ON t.ENTITY_ID                   = ax.ENTITY_ID               AND 1 = ax.CNT
+  LEFT JOIN COMPANY_STATUS             AS  cs ON t.COMPANY_STATUS_ID           = cs.COMPANY_STATUS_ID
+  LEFT JOIN RS_SO_ORDER_TYPE           AS  ot ON t.SO_ORDER_TYPE_ID            = ot.LIST_ID
+  LEFT JOIN RS_ORDER_HOLD_REASON       AS ohr ON t.ORDER_HOLD_REASON_ID        = ohr.LIST_ID
+  LEFT JOIN CLASSES                    AS clt ON t.PRODUCT_CLASS_ID            = clt.CLASS_ID
+  LEFT JOIN (SELECT cgm.ENTITY_ID
+                   ,cg.LIST_ITEM_NAME AS CUSTOMER_GROUP
+                   ,ROW_NUMBER() OVER (PARTITION BY cgm.entity_ID ORDER BY cg.list_id) AS rn
+               FROM CUSTOMER_GROUPS_MAP cgm
+               JOIN RS_CUSTOMER_GROUPS  cg   -- has PK so _FIVETRAN_DELETED not needed. ISINACTIVE to be flagged in SELECT above.
+                 ON cgm.RS_CUSTOMER_GROUPS_ID = cg.LIST_ID
+              WHERE 0 = cgm._FIVETRAN_DELETED
+                AND cg.LIST_ITEM_NAME NOT IN ('IowaFlex Pilot')
+            )                                                           AS grp ON t.ENTITY_ID                   = grp.ENTITY_ID              AND 1 = grp.rn
+  -- Customer Hierarchy                                                                                                              
+  LEFT JOIN VW_CUSTOMERS                  AS  c0 ON t.ENTITY_ID                   = c0.CUSTOMER_ID             -- has PK so _FIVETRAN_DELETED not needed. ISINACTIVE to be flagged in SELECT above. Some records have no Customers - eg. Vendors - future should connect to ENTITY table
+  LEFT JOIN VW_CUSTOMERS                  AS  c1 ON c0.PARENT_ID                  = c1.CUSTOMER_ID             -- has PK so _FIVETRAN_DELETED not needed. ISINACTIVE to be flagged in SELECT above. Some records have no Customers - eg. Vendors - future should connect to ENTITY table
+  LEFT JOIN VW_CUSTOMERS                  AS  c2 ON c1.PARENT_ID                  = c2.CUSTOMER_ID             -- has PK so _FIVETRAN_DELETED not needed. ISINACTIVE to be flagged in SELECT above. Some records have no Customers - eg. Vendors - future should connect to ENTITY table
+  LEFT JOIN VW_CUSTOMERS                  AS  c3 ON c2.PARENT_ID                  = c3.CUSTOMER_ID             -- has PK so _FIVETRAN_DELETED not needed. ISINACTIVE to be flagged in SELECT above. Some records have no Customers - eg. Vendors - future should connect to ENTITY table
+  LEFT JOIN VW_CUSTOMER_TYPES             AS ct0 ON c0.CUSTOMER_TYPE_ID           = ct0.CUSTOMER_TYPE_ID       -- has PK so _FIVETRAN_DELETED not needed. ISINACTIVE to be flagged in SELECT above.
+  LEFT JOIN VW_CUSTOMER_TYPES             AS ct1 ON c1.CUSTOMER_TYPE_ID           = ct1.CUSTOMER_TYPE_ID       -- has PK so _FIVETRAN_DELETED not needed. ISINACTIVE to be flagged in SELECT above.
+  LEFT JOIN VW_CUSTOMER_TYPES             AS ct2 ON c2.CUSTOMER_TYPE_ID           = ct2.CUSTOMER_TYPE_ID       -- has PK so _FIVETRAN_DELETED not needed. ISINACTIVE to be flagged in SELECT above.
+  LEFT JOIN VW_CUSTOMER_TYPES             AS ct3 ON c3.CUSTOMER_TYPE_ID           = ct3.CUSTOMER_TYPE_ID       -- has PK so _FIVETRAN_DELETED not needed. ISINACTIVE to be flagged in SELECT above.
+  LEFT JOIN VW_RS_GROUP_ACCOUNT_OWNERSHIP AS ga0 ON c0.GROUP_ACCOUNT_OWNERSHIP_ID = ga0.LIST_ID                
+  LEFT JOIN VW_RS_GROUP_ACCOUNT_OWNERSHIP AS ga1 ON c1.GROUP_ACCOUNT_OWNERSHIP_ID = ga1.LIST_ID                
+  LEFT JOIN VW_RS_GROUP_ACCOUNT_OWNERSHIP AS ga2 ON c2.GROUP_ACCOUNT_OWNERSHIP_ID = ga2.LIST_ID                
+  LEFT JOIN VW_RS_GROUP_ACCOUNT_OWNERSHIP AS ga3 ON c3.GROUP_ACCOUNT_OWNERSHIP_ID = ga3.LIST_ID                
+  LEFT JOIN VW_RS_CLINICAL_ACCOUNT_OWNERSHIP AS ca0 ON c0.CLINICAL_ACCOUNT_OWNERSHIP_ID = ca0.LIST_ID          
+  LEFT JOIN VW_RS_CLINICAL_ACCOUNT_OWNERSHIP AS ca1 ON c1.CLINICAL_ACCOUNT_OWNERSHIP_ID = ca1.LIST_ID          
+  LEFT JOIN VW_RS_CLINICAL_ACCOUNT_OWNERSHIP AS ca2 ON c2.CLINICAL_ACCOUNT_OWNERSHIP_ID = ca2.LIST_ID          
+  LEFT JOIN VW_RS_CLINICAL_ACCOUNT_OWNERSHIP AS ca3 ON c3.CLINICAL_ACCOUNT_OWNERSHIP_ID = ca3.LIST_ID          
+                                                                                                                
+  LEFT JOIN VW_TRANSACTION_LINES          AS  tl ON t.TRANSACTION_ID              = tl.TRANSACTION_ID          -- Has no _FIVETRAN_DELETED column
+  LEFT JOIN VW_ACCOUNTS                   AS  ac ON tl.ACCOUNT_ID                 = ac.ACCOUNT_ID              -- Has no _FIVETRAN_DELETED column
+  LEFT JOIN VW_PRICE_TYPES                AS  pt ON tl.PRICE_TYPE_ID              = pt.PRICE_TYPE_ID           -- has PK so _FIVETRAN_DELETED not needed. ISINACTIVE to be flagged in SELECT above.
+  LEFT JOIN VW_ITEMS                      AS   i ON tl.ITEM_ID                    = i.ITEM_ID                  -- has PK so _FIVETRAN_DELETED not needed. ISINACTIVE to be flagged in SELECT above.
+
+  LEFT JOIN VW_CLASSES                    AS cl3 ON COALESCE(i.CLASS_ID,tl.CLASS_ID) = cl3.CLASS_ID            -- Has no _FIVETRAN_DELETED column. ISINACTIVE flagged in SELECT above. Some records have no Items or Classess
+  LEFT JOIN VW_CLASSES                    AS cl2 ON cl3.PARENT_ID                 = cl2.CLASS_ID               -- Has no _FIVETRAN_DELETED column. ISINACTIVE flagged in SELECT above. Some records have no Items or Classess
+  LEFT JOIN VW_CLASSES                    AS cl1 ON cl2.Parent_ID                 = cl1.CLASS_ID               -- Has no _FIVETRAN_DELETED column. ISINACTIVE flagged in SELECT above. Some records have no Items or Classess
+  LEFT JOIN VW_RS_MATERIAL_GROUP          AS  mi ON i.material_group_id           = mi.list_id                 -- has PK so _FIVETRAN_DELETED not needed. ISINACTIVE to be flagged in SELECT above.
+  LEFT JOIN VW_LOCATIONS                  AS  lo ON tl.LOCATION_ID                = lo.LOCATION_ID             -- Has no _FIVETRAN_DELETED column. ISINACTIVE to be flagged in SELECT above.
+  LEFT JOIN VW_SALES_REPS                 AS rep ON t.SALES_REP_ID                = rep.SALES_REP_ID
+  LEFT JOIN VW_EMPLOYEES                  AS mgr ON rep.SUPERVISOR_ID             = mgr.EMPLOYEE_ID
+
+WHERE TRANSACTION_CATEGORY IN ('BOOKINGS','BILLINGS') 
+  AND 1 = 1
+  AND t._FIVETRAN_DELETED = 0;
